@@ -3,6 +3,6 @@ layout: page
 title: About
 permalink: /about/
 ---
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+I started to learn Full Stack Web Development back in December 2015 with the Flatiron's School online course. Learn.co focuses on teaching students the Ruby language, Rails, HTML, CSS, Javascript, SQL, Git and GitHub among other technologies.
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+The objective of my blog, is to write about what I'm learning. As they say, "Repetition is the mother of Retention". So, in hopes to cement these concepts and become second nature, I will be posting the progress of my journey.
