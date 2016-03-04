@@ -1,12 +1,12 @@
 ---
 layout: post
-title:  "My first CLI Gem"
-date:   2016-02-15
-categories: CLI Gem
+title:  "Learning SQL"
+date:   2016-03-03
+categories: SQL
 ---
-Here is where I will be writing how I made my first CLI Gem using bundler.
+Here is where I will be writing SQL.
 
-Describe your gem in a few words.
+Describe SQL in a few words.
 
 What are some of the parts that make it work.
 
