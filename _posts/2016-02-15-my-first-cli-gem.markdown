@@ -10,17 +10,28 @@ In order to do this, I needed to get some gems that would make this easier. So, 
 
 The first file, `recipe`, is located in the bin directory, which is how the user will interact with the program.
 
-`Recipe::CLI.new.call`
-
 To run the program, the user types `./bin/recipe`.
 
-Before I can run the program, I created these files to collaborate with each other under the `lib` directory.
+Before running the program, I created these files to collaborate with each other under the `lib` directory.
 
-`cli.rb   my_recipe.rb   scraper.rb`
+`cli.rb`, `my_recipe.rb` and `scraper.rb`
+
+### `my_recipe` class
 
 The `my_recipe` class is responsible for creating its own objects with contains a name, description and url property. Also, it saves itself into the `@@all` class variable, which is set to an empty array.
 
-The `scraper` class is responsible for scraping the needed data from a website. Once this class grabs the desired information, using Nokogiri, its methods will separate each piece of information into a format that the user can read.
+{% highlight ruby %}
+def initialize
+  @name = name
+  @description = description
+  @url = url
+  @@all << self
+end
+{% endhighlight %}
+
+### `scraper` class
+
+The `scraper` class is responsible for scraping data from a website. Once this class grabs the desired information, using `Nokogiri`, the methods inside the `scraper` class will separate each piece of information into a format that the user can read.
 
 The `get_page` method will grab the entire HTML document passed in as an argument.
 
@@ -38,7 +49,7 @@ def get_recipes
 end
 {% endhighlight %}
 
-Now that the stage is set, it's time to make some recipes! Well, not literally, unless if you're a chef. The `make_recipes` takes care of that. First, it iterates through the elements that `get_recipes` returns and then instantiating a `MyRecipe` instance assigning its respective value to the object's attributes.
+Now that the stage is set, it's time to make some recipes! Well, not literally, unless if you're a chef. The `make_recipes` takes care of that. First, it iterates through the elements that `get_recipes` method returns. Then it instantiates a `MyRecipe` instance assigning the respective value to the object's attributes.
 
 {% highlight ruby %}
 def make_recipes
@@ -53,7 +64,9 @@ def make_recipes
 end
 {% endhighlight %}
 
-Where can we implement the logic for how the user will request recipe information? This will happen in the `cli`class. When the program is run, via the `./bin/recipe`, the `Recipe::CLI.new.call` is invoked. What's happening here? An instance is being create and it calls the `call` method. But what is this method doing? Well, I hate to say this, but the user is not allow know. So we'll keep that implementation encapsulated. Just like in a restaurant, you go to eat, not to mingle with the chef. Can you imagine what would happen if we're allowed in the kitchen? That's why we have waiters. You order something, the waiter goes to the kitchen with your request and minutes later, you get your food. But for the purpose of this blog, let's take a peek.
+### `cli` class
+
+Where can we implement the logic for how the user will request recipe information? This will happen in the `cli`class. When the program is run, via the `./bin/recipe`, the `Recipe::CLI.new.call` is invoked. What's happening here? An instance is being create and calling the `call` method. But what does the `call` method do? Well, from the user's standpoint, it is best to keep the implementation encapsulated. Just like going to a restaurant, you call for the waiter and request an item from the menu. In most cases, someone is not interested in mingling with the chef affairs directly. Can you imagine what would happen if we're allowed in the kitchen? That's why we have waiters. You order something, the waiter goes to the kitchen with your request and minutes later, you get your food. The user interacts only with the interface, in this case, the waiter. But for the purpose of this blog, let's take a peek inside the `cli`'s class methods.
 
 Here the `call` method will invoke four methods, as shown below:
 
@@ -77,7 +90,7 @@ The first method it will call is the `scrape_recipes` method. Here, a instance o
   end
 {% endhighlight %}
 
-When the user types `"list"` in the terminal, it will output:
+When the user types `"list"` in the terminal, for example, it will output:
 
 {% highlight ruby %}
 #=> '1. Beef Stroganoff' to STDOUT.
@@ -94,7 +107,7 @@ See below:
   end
 {% endhighlight %}
 
-The `menu` method will take user input and check for some basic validation. If the input is valid, then the code associated with the statement will be run. If the user types `exit`, the `goodbye` method will get called.
+The `menu` method is responsible for taking the user input and check for some basic validation. If the input is valid, then the code associated with the statement will be run. If the user types `exit`, the `goodbye` method will get called.
 
 {% highlight ruby %}
   def menu
@@ -124,4 +137,4 @@ The `menu` method will take user input and check for some basic validation. If t
   end
 {% endhighlight %}
 
-That explains, more or less, how this program works. Thought this gem is very simple, I welcome any improvements, suggestions or tips my way.
+That explains, more or less, how this program works, from a beginner's standpoint. Thought this gem is very simple and work in progress, I welcome any improvements, suggestions or tips my way.
