@@ -5,11 +5,15 @@ date:   2016-03-03
 categories: SQL
 ---
 
-### Heading Level 3
+### Installing SQLite in Window 10 OS
 
 > Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
 
-Here is where I will be writing SQL.
+First, find out how to check if you have SQLite is installed in your system. Type a simple command to your command-prompt, like this:
+
+```
+which sqlite3
+```
 
 Describe SQL in a few words.
 

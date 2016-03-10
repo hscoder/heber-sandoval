@@ -4,7 +4,9 @@ title:  "My first CLI Gem"
 date:   2016-02-15
 categories: CLI Gem
 ---
-For my first CLI Gem project, I decided to scrape a website that contains lots of recipes. Then, using a simple CLI application, users can interact with different recipes and get more information, if they desire
+## The Recipe CLI Gem
+
+For my first CLI Gem project, I decided to scrape a website that contains lots of recipes. Then, using a simple CLI application, users can interact with different recipes and get more information, if they desire.
 
 In order to do this, I needed to get some gems that would make this easier. So, from my terminal, I typed `gem install bundler` This allowed me to create the structure for my project using the following command: `bundle gem recipe`. After all files and directories were created, it was time to configure some of the logic in the files.
 
