@@ -6,7 +6,7 @@ categories: greeting
 ---
 This is my first blog. These post will contain general information about Web Development concepts that I've been learning.
 
-First, I created this static website, been hosted by GitHub, using the `jekyll` gem. To add add or edit a post, I followed the steps below:
+First, I created this static website, being hosted by GitHub, using the `jekyll` gem. To add add or edit a post, I followed the steps below:
 
 Make sure to run `jekyll serve`, which launches a web server and auto-regenerates your site when a file is updated.
 
