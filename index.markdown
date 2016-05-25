@@ -2,7 +2,7 @@
 layout: page
 title: Héber Sandoval
 ---
-Hi, I'm Héber Sandoval, currently a Learn-Verified student at the [Flatiron School](https://learn.co).
+Hi, I'm Héber Sandoval, currently a Learn-Verified student at the [Flatiron School](https://learn.co/with/hscoder).
 
 ## Introduction
 
