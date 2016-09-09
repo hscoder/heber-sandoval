@@ -14,27 +14,24 @@ First, we need to set up our models, migrations, resources, controllers, views a
 Here's a birds view of the model structure:
 table
 
-|| users table      ||
+#### users table
 | id  | name | email |
 | :-- | :--- | :-----|
 |     |      |       |
-[users table]
 
+#### posts table
 | id  | title | body | user_id | category_id |
 | :-- | :---- | :--- | :------ | :-----------|
 |     |       |      |         |             |
-[posts table]
 
+#### categories table
 | id  | name |
 | :-- | :----|
-[categories table][section-mmd-tables-table1]
 
-`comments table`
-
+#### comments table
 | id  | body  | post_id  | user_id |
 | :-- | :-----| :------- | :-------|
 |     |       |          |         |
-[comments table][section-mmd-tables-table1]
 
 ```
 users
@@ -64,18 +61,18 @@ Lets get started!
 
 ## Creating the User Model
 
+#### users table
 | id  | name | email |
 | :-- | :--- | :-----|
 |     |      |       |
-[users table][section-mmd-tables-table1]
 
  To start a new project, run:
 
- `rails _4.2.5_ new blogr`
+ `$ rails _4.2.5_ new blogr`
 
  then,
 
- `cd blogr`
+ `$ cd blogr`
 
  Run `rails server` and if all works, you should see the generic "Welcome to Rails" page.
 
@@ -83,7 +80,7 @@ Lets get started!
 
  Generate the User model, run this command from the terminal:
 
-`rails g resources User name email`
+`$ rails g resources User name email`
 
 Running this code generates several files inside our app directory. Under the `db` directory, we find a directory called `migrate` that contains the db migration. Inside that directory, a file called, `create_users.rb` contains this code:
 
@@ -119,16 +116,15 @@ end
 
 ## Creating the Post Model
 
-`posts table`
+#### posts table
 
 | id  | title | body | user_id | category_id |
 | :-- | :---- | :--- | :------ | :-----------|
 |     |       |      |         |             |
-[posts table][section-mmd-tables-table1]
 
 Brief description goes here.
 
-`rails g resources Post title body:text references:user references:category`
+`$ rails g resources Post title body:text references:user references:category`
 
 This code generates several files inside our app directory. Under the `db` directory, we find a directory called `migrate` that contains the db migration. Inside that directory, a file called, `create_posts.rb` contains this code:
 
