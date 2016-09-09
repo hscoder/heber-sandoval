@@ -14,34 +14,26 @@ First, we need to set up our models, migrations, resources, controllers, views a
 Here's a birds view of the model structure:
 table
 
-`users table`
-
 | id  | name | email |
 | :-- | :--- | :-----|
 |     |      |       |
-
-
-|  id | name  |  email |   |   |
-|-----|-------|--------|---|---|
-|     |       |        |   |   |
-|     |       |        |   |   |
-
-`posts table`
+[users table][section-mmd-tables-table1]
 
 | id  | title | body | user_id | category_id |
 | :-- | :---- | :--- | :------ | :-----------|
 |     |       |      |         |             |
-
-`categories table`
+[posts table][section-mmd-tables-table1]
 
 | id  | name |
 | :-- | :----|
+[categories table][section-mmd-tables-table1]
 
 `comments table`
 
 | id  | body  | post_id  | user_id |
 | :-- | :-----| :------- | :-------|
 |     |       |          |         |
+[comments table][section-mmd-tables-table1]
 
 ```
 users
@@ -71,11 +63,10 @@ Lets get started!
 
 ## Creating the User Model
 
-`users table`
-
 | id  | name | email |
 | :-- | :--- | :-----|
 |     |      |       |
+[users table][section-mmd-tables-table1]
 
  To start a new project, run:
 
@@ -95,7 +86,7 @@ Lets get started!
 
 Running this code generates several files inside our app directory. Under the `db` directory, we find a directory called `migrate` that contains the db migration. Inside that directory, a file called, `create_users.rb` contains this code:
 
-{% highlight ruby %}
+```ruby
 class CreateUsers < ActiveRecord::Migration
   def change
     create_table :users do |t|
@@ -106,7 +97,7 @@ class CreateUsers < ActiveRecord::Migration
     end
   end
 end
-{% endhighlight %}
+```
 
 Run migration: `rake db:migrate`. This creates a table named `users` with fields named `id`, `name`, `email`, `created_at` and `updated_at`.
 
@@ -114,13 +105,13 @@ The `name` and `email` fields will store data entered by the user. Rails adds th
 
 Code in `app/models/user.rb`
 
-```
+```ruby
 class User < ActiveRecord::Base
 end
   ```
 Code in `app/controllers/users_controllers.rb`
 
-```
+```ruby
 class UsersController < ApplicationController
 end
 ```
@@ -132,6 +123,7 @@ end
 | id  | title | body | user_id | category_id |
 | :-- | :---- | :--- | :------ | :-----------|
 |     |       |      |         |             |
+[posts table][section-mmd-tables-table1]
 
 Brief description goes here.
 
@@ -139,7 +131,7 @@ Brief description goes here.
 
 This code generates several files inside our app directory. Under the `db` directory, we find a directory called `migrate` that contains the db migration. Inside that directory, a file called, `create_posts.rb` contains this code:
 
-{% highlight ruby %}
+```ruby
 class CreatePosts < ActiveRecord::Migration
   def change
     create_table :posts do |t|
@@ -153,7 +145,7 @@ class CreatePosts < ActiveRecord::Migration
     end
   end
 end
-{% endhighlight %}
+```
 
 Running this migration from the terminal with `rake db:migrate`, creates a table named `posts` with fields named `id`, `title`, `body`, `user_id`, `category_id`, `created_at` and `updated_at`.
 
@@ -163,13 +155,13 @@ So far, the app doesn't have much code.
 
 Code in `app/models/post.rb`
 
-```
+```ruby
 class Post < ActiveRecord::Base
 end
   ```
 Code in `app/controllers/posts_controllers.rb`
 
-```
+```ruby
 class PostsController < ApplicationController
 end
 ```
