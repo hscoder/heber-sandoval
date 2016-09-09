@@ -32,11 +32,10 @@ table
 | :-- | :---- | :--- | :------ | :-----------|
 |     |       |      |         |             |
 
-```categories table
+`categories table`
 
 | id  | name |
 | :-- | :----|
-```
 
 `comments table`
 
