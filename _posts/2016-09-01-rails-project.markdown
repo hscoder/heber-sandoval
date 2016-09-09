@@ -14,15 +14,16 @@ First, we need to set up our models, migrations, resources, controllers, views a
 Here's a birds view of the model structure:
 table
 
+|| users table      ||
 | id  | name | email |
 | :-- | :--- | :-----|
 |     |      |       |
-[users table][section-mmd-tables-table1]
+[users table]
 
 | id  | title | body | user_id | category_id |
 | :-- | :---- | :--- | :------ | :-----------|
 |     |       |      |         |             |
-[posts table][section-mmd-tables-table1]
+[posts table]
 
 | id  | name |
 | :-- | :----|
