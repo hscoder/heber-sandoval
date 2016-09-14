@@ -1,155 +1,81 @@
 ---
 layout: post
-title:  "Understanding Rails Associations"
+title:  "Understanding Rails Active Record Associations"
 date:   2016-09-02
 categories: Rails
 ---
 
 ## How I Understand Associations in Rails
 
-To understand the way associations work in `rails`, I had to use a domain model that I understood as an example. In this case, a recipe that is made up of ingredients. So, here is how I broke it down to cement this concept.
+To understand the way Active Record associations work in `rails`, I had to use a real world example that made sense to me. In this case, I used a recipe scenario, where a recipe is made up of many ingredients. So, here is how I broke it down to cement this concept.
 
-As I thought about how to make the tables in the database to relate to one another, I ran into a problem. I needed a way to express that a recipe can have lots of ingredients. So, the easiest way to do this was to create a column named `recipe_id` in the ingredients_table, referencing which recipe this ingredient belongs to. This would look like this:
+As I thought about how to make the tables in the database to relate to one another, I ran into a problem. I needed a way to express that a recipe can have lots of ingredients. So, in my first attempt, I created a column named `recipe_id` in the ingredients_table using the macro-like class method for tying objects together through foreign keys.This would be expressed like this in model:
+
+```ruby
+class Ingredient < ActiveRecord::Base
+  belongs_to :recipe
+end
+```
+
+ The `recipe_id` column is also referred as the `foreign key`. This column references which recipe a particular  ingredient belongs to. The tables would look like this:
 
 ingredients_table
+
 | id  | name     | recipe_id |
 | :-- | :------- | :---------|
 | 1   | Tomatoes | 1         |
+| 2   | Garlic   | 1         |
 
 recipes_table
+
 | id  | name     |
 | :-- | :------- |
 | 1   | Lasagna  |
 
-But what would happen when I want to save my grandma's Pot Pie recipe, that also uses tomatoes, in the database?
+Here, the ingredient `Tomatoes` is pointing to the `Lasagna` recipe. Adding `pasta`, `garlic`, `cheese` and any other ingredient needed for this recipe, would need to have a value of `1` in the `recipe_id` column of the ingredients_table to refer to the `Lasagna` in the recipes_table. But what would happen when I want to save my grandma's Pot Pie recipe, that also uses tomatoes, in the database?
 
 ingredients_table
+
 | id  | name     | recipe_id |
 | :-- | :------- | :---------|
 | 1   | Tomatoes | 1, [2]    |
 
 recipes_table
+
 | id  | name     |
 | :-- | :------- |
 | 1   | Lasagna  |
 | 2   | Pot Pie  |
 
-Now, I'm forced to create another column in the ingredients_table to hold the ingredient from my grandma's recipe or spell tomatoes differently, maybe by dropping the "e". But thats very sloppy and a nightmare to maintain. It seems that I have a many to many relationship among these two tables, recipes_table and ingredients_table. So the best solution, in this case, is to create a `join table`, which I called `pantries`.
+Now, I'm forced to create another column in the ingredients_table to hold the ingredient from my grandma's recipe or spell tomatoes differently, maybe by dropping the "e" or just store another ingredient with same name. But that's very sloppy and a nightmare to maintain. So, in my second attempt, I used a many-to-many association, to solve this problem. So the best solution, in this case, is to create a `join table`, which I called `pantries` that will hold the foreign keys. I'll use the macro-like `has_many` class method with the `:through` option on the recipes_table and the ingredients_table.
 
 Here is how the tables looks now:
 
 ingredients_table
+
 | id  | name     |
 | :-- | :------- |
 | 1   | Tomatoes |
 
 pantries_table
+
 | id  | recipe_id | ingredient_id |
 | :-- | :-------- | :-------------|
 | 1   | 1         | 1             |
 | 2   | 2         | 1             |
 
 recipes_table
+
 | id  | name     |
 | :-- | :------- |
 | 1   | Lasagna  |
 | 2   | Pot Pie  |
 
-Now I can add my grandma's Pot Pie recipe, that needs those tomatoes to taste great, to the database. But this time, the ingredient that is associated to the Pot Pie recipe, will be stored the `join table` called pantries. As you can see, the Lasagna and the Pot Pie use `tomatoes` in their recipes. And now, both recipes are pointing to the same ingredient in the ingredients_table, all possible through the `join table` foreign key columns.
+Now I can add my grandma's Pot Pie recipe, that needs those tomatoes to taste great, to the database. But this time, the ingredient that is associated to the Pot Pie recipe, will be stored the `join table` called pantries. As you can see, the Lasagna and the Pot Pie use `tomatoes` in their recipes. And now, one ingredient is pointing to a different recipe in the pantries_table, all possible through the `join table` foreign key columns.
 
 ### Putting This Understanding Into Practice
 
-To connect all these tables together so `rails` can talk to the database, I need to include the macros in each corresponding model as shown below.
-
-### Ingredient Model
-
-```ruby
-class Ingredient < ActiveRecord::Base
-  has_many :pantries
-  has_many :recipes, through: :pantries
-end
-```
-
-To create an ingredient:
-
-```
-$ ingredient = Ingredient.create name: "Carrots"
-
-(0.2ms)  SAVEPOINT active_record_1
-SQL (0.3ms)  INSERT INTO "ingredients" ("name", "created_at", "updated_at") VALUES (?, ?, ?)  [["name", "Carrots"], ["created_at", "2016-09-12 03:00:54.466500"], ["updated_at", "2016-09-12 03:00:54.466500"]]
-(0.1ms)  RELEASE SAVEPOINT active_record_1
-=> #<Ingredient id: 2, name: "Carrots", created_at: "2016-09-12 03:00:54", updated_at: "2016-09-12 03:00:54">
-```
-
-To create an ingredient with its associated recipe:
-
-```
-$ ingredients.recipes.create name: "Pot Pie"
-
-(0.2ms)  SAVEPOINT active_record_1
-SQL (0.2ms)  INSERT INTO "recipes" ("name", "created_at", "updated_at") VALUES (?, ?, ?)  [["name", "Pot Pie"], ["created_at", "2016-09-12 03:02:59.150882"], ["updated_at", "2016-09-12 03:02:59.150882"]]
-SQL (0.3ms)  INSERT INTO "pantries" ("ingredient_id", "recipe_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)  [["ingredient_id", 2], ["recipe_id", 2], ["created_at", "2016-09-12 03:02:59.154880"], ["updated_at", "2016-09-12 03:02:59.154880"]]
-(0.1ms)  RELEASE SAVEPOINT active_record_1
-=> #<Recipe id: 2, name: "Pot Pie", created_at: "2016-09-12 03:02:59", updated_at: "2016-09-12 03:02:59">
-```
-
-To check the ingredient's recipes:
-
-```
-$ ingredient.recipes
-
-Recipe Load (0.5ms)  SELECT "recipes".* FROM "recipes" INNER JOIN "pantries" ON "recipes"."id" = "pantries"."recipe_id" WHERE "pantries"."ingredient_id" = ?  [["ingredient_id", 2]]
-=> #<ActiveRecord::Associations::CollectionProxy [#<Recipe id: 2, name: "Pot Pie", created_at: "2016-09-12 03:02:59", updated_at: "2016-09-12 03:02:59">]>
-```
-
-### Pantry Model
-
-```ruby
-class Pantry < ActiveRecord::Base
-  belongs_to :recipe
-  belongs_to :ingredient
-end
-```
-
-To check the Pantry's associations:
-
-```
- $ Pantry.all
-
- Pantry Load (0.3ms)  SELECT "pantries".* FROM "pantries"
-=> #<ActiveRecord::Relation [#<Pantry id: 1, recipe_id: 1, ingredient_id: 1, created_at: "2016-09-12 02:40:19", updated_at: "2016-09-12 02:40:19">, #<Pantry id: 2, recipe_id: 2, ingredient_id: 2, created_at: "2016-09-12 03:02:59", updated_at: "2016-09-12 03:02:59">]>
-```
-
-If you want to create a Pantry then assign a associated recipe and ingredient
-
-```
-$ pantry = Pantry.create
-
-(0.1ms)  SAVEPOINT active_record_1
-SQL (0.3ms)  INSERT INTO "pantries" ("created_at", "updated_at") VALUES (?, ?)  [["created_at", "2016-09-12 03:09:26.118106"], ["updated_at", "2016-09-12 03:09:26.118106"]]
-(0.2ms)  RELEASE SAVEPOINT active_record_1
-=> #<Pantry id: 3, recipe_id: nil, ingredient_id: nil, created_at: "2016-09-12 03:09:26", updated_at: "2016-09-12 03:09:26">
-```
-
-What the console outputs: Here an SQL statement is been executed. It says, "INSERT this timestamp value of "2016-09-12 00:41:27.424544" INTO the "created_at" column of the "pantries" table". The same goes with the "updated_at" column.
-
-```
-$ pantry.recipe = pizza
-
-=> #<Recipe id: 3, name: "Pizza", created_at: "2016-09-12 03:11:20", updated_at: "2016-09-12 03:11:20">
-
-$ pantry
-
-=> #<Pantry id: 3, recipe_id: 3, ingredient_id: nil, created_at: "2016-09-12 03:09:26", updated_at: "2016-09-12 03:09:26">
-
-$ pantry.ingredient = cheese
-
-=> #<Ingredient id: 3, name: "Cheese", created_at: "2016-09-12 03:11:57", updated_at: "2016-09-12 03:11:57">
-
-$ pantry
-
-=> #<Pantry id: 3, recipe_id: 3, ingredient_id: 3, created_at: "2016-09-12 03:09:26", updated_at: "2016-09-12 03:09:26">
-```
+To connect all these tables together so `rails` can talk to the database, I need to include the macro-like class methods in each corresponding model as shown below.
 
 ### Recipe Model
 
@@ -160,7 +86,9 @@ class Recipe < ActiveRecord::Base
 end
 ```
 
-To create a recipe:
+Lets test this model out.
+
+Creating a recipe:
 
 ```
 $ recipe = Recipe.create name: "Lasagna"
@@ -168,33 +96,205 @@ $ recipe = Recipe.create name: "Lasagna"
 (0.1ms)  SAVEPOINT active_record_1
 SQL (0.5ms)  INSERT INTO "recipes" ("name", "created_at", "updated_at") VALUES (?, ?, ?)  [["name", "Lasagna"], ["created_at", "2016-09-12 02:36:47.743490"], ["updated_at", "2016-09-12 02:36:47.743490"]]
 (0.1ms)  RELEASE SAVEPOINT active_record_1
+
 => #<Recipe id: 1, name: "Lasagna", created_at: "2016-09-12 02:36:47", updated_at: "2016-09-12 02:36:47">
 ```
 
-To create a recipe with its associated ingredient:
+When creating a recipe, rails executed an SQL command as noted above. This says, to INSERT the VALUE of `Lasagna` INTO the `name` column of the recipes_table. The other columns will be auto-generated by rails, as seen by the output of the rails console.
+
+Because a recipe can have many ingredients through its join table, we can create its associated ingredient, in this manner:
+
+To create an ingredient with its associated recipe:
 
 ```
 $ recipe.ingredients.create name: "Tomatoes"
 
 (0.1ms)  SAVEPOINT active_record_1
 SQL (0.4ms)  INSERT INTO "ingredients" ("name", "created_at", "updated_at") VALUES (?, ?, ?)  [["name", "Tomatoes"], ["created_at", "2016-09-12 02:40:19.153429"], ["updated_at", "2016-09-12 02:40:19.153429"]]
+
 SQL (0.3ms)  INSERT INTO "pantries" ("recipe_id", "ingredient_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)  [["recipe_id", 1], ["ingredient_id", 1], ["created_at", "2016-09-12 02:40:19.167678"], ["updated_at", "2016-09-12 02:40:19.167678"]]
 (0.1ms)  RELEASE SAVEPOINT active_record_1
+
 => #<Ingredient id: 1, name: "Tomatoes", created_at: "2016-09-12 02:40:19", updated_at: "2016-09-12 02:40:19">
 ```
 
-To check the recipe's ingredients:
+The SQL commands executed, sheds some light on what happen behind the scene of this association. The first one says, INSERT the VALUE of `Tomatoes` INTO the `name` column of the ingredients_table. Again, the other columns are auto-generated by rails. The second says, INSERT the VALUES `1` and `1` INTO the `recipe_id` and `ingredient_id` columns of the pantries_table, respectively. This was auto-generated and managed by rails because of the way we structured our models and how we utilize the Active Record association macro-like class methods.
+
+To check if our association worked on the recipe's ingredients:
 
 ```
 $ recipe.ingredients
 
 Ingredient Load (0.4ms)  SELECT "ingredients".* FROM "ingredients" INNER JOIN "pantries" ON "ingredients"."id" = "pantries"."ingredient_id" WHERE "pantries"."recipe_id" = ?  [["recipe_id", 1]]
+
 => #<ActiveRecord::Associations::CollectionProxy [#<Ingredient id: 1, name: "Tomatoes", created_at: "2016-09-12 02:40:19", updated_at: "2016-09-12 02:40:19">]>
 ```
 
-#######   #####    #######
+And there you have it!
 
-Here is the schema of my recipe_test models:
+### Pantry Model
+
+```ruby
+class Pantry < ActiveRecord::Base
+  belongs_to :recipe
+  belongs_to :ingredient
+end
+```
+
+Lets test this model out.
+
+To check the Pantry's associations:
+
+```
+ $ Pantry.all
+
+ Pantry Load (0.3ms)  SELECT "pantries".* FROM "pantries"
+
+=> #<ActiveRecord::Relation [#<Pantry id: 1, recipe_id: 1, ingredient_id: 1, created_at: "2016-09-12 02:40:19", updated_at: "2016-09-12 02:40:19">, #<Pantry id: 2, recipe_id: 2, ingredient_id: 2, created_at: "2016-09-12 03:02:59", updated_at: "2016-09-12 03:02:59">]>
+```
+
+So far, we have two pantries that are joining a recipe to an ingredient, respectively. If you want to create a Pantry then assign a associated recipe and ingredient, here's how we do it.
+
+```
+$ pantry = Pantry.create
+
+(0.1ms)  SAVEPOINT active_record_1
+SQL (0.3ms)  INSERT INTO "pantries" ("created_at", "updated_at") VALUES (?, ?)  [["created_at", "2016-09-12 03:09:26.118106"], ["updated_at", "2016-09-12 03:09:26.118106"]]
+(0.2ms)  RELEASE SAVEPOINT active_record_1
+
+=> #<Pantry id: 3, recipe_id: nil, ingredient_id: nil, created_at: "2016-09-12 03:09:26", updated_at: "2016-09-12 03:09:26">
+```
+
+What the console outputs: Here an SQL command is been executed. It says, "INSERT this timestamp value of "2016-09-12 00:41:27.424544" INTO the "created_at" column of the "pantries" table". The same goes with the "updated_at" column.
+
+Now, to add a recipe:
+
+```
+$ pantry.recipe = pizza
+
+=> #<Recipe id: 3, name: "Pizza", created_at: "2016-09-12 03:11:20", updated_at: "2016-09-12 03:11:20">
+
+$ pantry
+
+=> #<Pantry id: 3, recipe_id: 3, ingredient_id: nil, created_at: "2016-09-12 03:09:26", updated_at: "2016-09-12 03:09:26">
+```
+
+Now, to add and ingredient:
+
+```
+$ pantry.ingredient = cheese
+
+=> #<Ingredient id: 3, name: "Cheese", created_at: "2016-09-12 03:11:57", updated_at: "2016-09-12 03:11:57">
+
+$ pantry
+
+=> #<Pantry id: 3, recipe_id: 3, ingredient_id: 3, created_at: "2016-09-12 03:09:26", updated_at: "2016-09-12 03:09:26">
+```
+
+In both cases, rails auto-generated and managed the foreign key values for `recipe_id` and  `ingredient_id` columns.
+
+### Ingredient Model
+
+```ruby
+class Ingredient < ActiveRecord::Base
+  has_many :pantries
+  has_many :recipes, through: :pantries
+end
+```
+
+Lets test this model out.
+
+Creating an ingredient:
+
+```
+$ ingredient = Ingredient.create name: "Carrots"
+
+(0.2ms)  SAVEPOINT active_record_1
+SQL (0.3ms)  INSERT INTO "ingredients" ("name", "created_at", "updated_at") VALUES (?, ?, ?)  [["name", "Carrots"], ["created_at", "2016-09-12 03:00:54.466500"], ["updated_at", "2016-09-12 03:00:54.466500"]]
+(0.1ms)  RELEASE SAVEPOINT active_record_1
+
+=> #<Ingredient id: 2, name: "Carrots", created_at: "2016-09-12 03:00:54", updated_at: "2016-09-12 03:00:54">
+```
+
+When creating an ingredient, rails executed an SQL command as noted above. This says, to INSERT the VALUE of `Carrots` INTO the `name` column of the ingredients_table. The other columns will be auto-generated by rails, as seen by the output of the rails console.
+
+Because an ingredient can have many recipes through its join table, we can create its associated recipe, in this manner:
+
+```
+$ ingredient.recipes.create name: "Pot Pie"
+
+(0.2ms)  SAVEPOINT active_record_1
+SQL (0.2ms)  INSERT INTO "recipes" ("name", "created_at", "updated_at") VALUES (?, ?, ?)  [["name", "Pot Pie"], ["created_at", "2016-09-12 03:02:59.150882"], ["updated_at", "2016-09-12 03:02:59.150882"]]
+
+SQL (0.3ms)  INSERT INTO "pantries" ("ingredient_id", "recipe_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)  [["ingredient_id", 2], ["recipe_id", 2], ["created_at", "2016-09-12 03:02:59.154880"], ["updated_at", "2016-09-12 03:02:59.154880"]]
+(0.1ms)  RELEASE SAVEPOINT active_record_1
+
+=> #<Recipe id: 2, name: "Pot Pie", created_at: "2016-09-12 03:02:59", updated_at: "2016-09-12 03:02:59">
+```
+
+The SQL commands executed, sheds some light on what happen behind the scene of this association. The first one says, to INSERT the VALUE of `Pot Pie` INTO the `name` column of the recipes_table. Again, the other columns are auto-generated by rails. The second says, to INSERT the VALUES `2` and `2` INTO the `ingredient_id` and `recipe_id` columns of the pantries_table, respectively. This was auto-generated and managed by rails because of the way we structured our models and how we utilize the Active Record association macro-like class methods.
+
+To check if our association worked on the ingredient's recipes:
+
+```
+$ ingredient.recipes
+
+Recipe Load (0.5ms)  SELECT "recipes".* FROM "recipes" INNER JOIN "pantries" ON "recipes"."id" = "pantries"."recipe_id" WHERE "pantries"."ingredient_id" = ?  [["ingredient_id", 2]]
+
+=> #<ActiveRecord::Associations::CollectionProxy [#<Recipe id: 2, name: "Pot Pie", created_at: "2016-09-12 03:02:59", updated_at: "2016-09-12 03:02:59">]>
+```
+
+There it is!
+
+The rails API has a nice table of the auto-generated methods as a result of using the association's macro-like class methods for tying objects together through foreign keys.
+
+#### Singular associations (one-to-one)
+
+```
+                                  |            |  belongs_to  |
+generated methods                 | belongs_to | :polymorphic | has_one
+----------------------------------+------------+--------------+---------
+other(force_reload=false)         |     X      |      X       |    X
+other=(other)                     |     X      |      X       |    X
+build_other(attributes={})        |     X      |              |    X
+create_other(attributes={})       |     X      |              |    X
+create_other!(attributes={})      |     X      |              |    X
+```
+#### Collection associations (one-to-many / many-to-many)
+
+```
+                                  |       |          | has_many
+generated methods                 | habtm | has_many | :through
+----------------------------------+-------+----------+----------
+others(force_reload=false)        |   X   |    X     |    X
+others=(other,other,...)          |   X   |    X     |    X
+other_ids                         |   X   |    X     |    X
+other_ids=(id,id,...)             |   X   |    X     |    X
+others<<                          |   X   |    X     |    X
+others.push                       |   X   |    X     |    X
+others.concat                     |   X   |    X     |    X
+others.build(attributes={})       |   X   |    X     |    X
+others.create(attributes={})      |   X   |    X     |    X
+others.create!(attributes={})     |   X   |    X     |    X
+others.size                       |   X   |    X     |    X
+others.length                     |   X   |    X     |    X
+others.count                      |   X   |    X     |    X
+others.sum(*args)                 |   X   |    X     |    X
+others.empty?                     |   X   |    X     |    X
+others.clear                      |   X   |    X     |    X
+others.delete(other,other,...)    |   X   |    X     |    X
+others.delete_all                 |   X   |    X     |    X
+others.destroy(other,other,...)   |   X   |    X     |    X
+others.destroy_all                |   X   |    X     |    X
+others.find(*args)                |   X   |    X     |    X
+others.exists?                    |   X   |    X     |    X
+others.distinct                   |   X   |    X     |    X
+others.reset                      |   X   |    X     |    X
+```
+
+So in summary, it's a good idea to put some thought in the way you want to tie your models together before starting to implement any logic. Something that helps me is to draw the tables and draw arrows pointing to how they will relate. This paints a general picture how they will work together.
+
+Here is the schema of models for a birds view.
 
 ```ruby
 ActiveRecord::Schema.define(version: 20160911232947) do
