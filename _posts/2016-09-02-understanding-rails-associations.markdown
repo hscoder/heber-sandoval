@@ -26,6 +26,16 @@ ingredients_table
 | 1   | Tomatoes | 1         |
 | 2   | Garlic   | 1         |
 
+
+
+id |     name   | recipe_id |
+---+------------+-----------+
+1  |  Tomatoes  |      1    |
+2  |  Garlic    |      1    |
+3  |  X         |           |
+
+
+
 recipes_table
 
 | id  | name     |
