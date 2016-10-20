@@ -8,7 +8,7 @@ description: >
 baseurl: "/heber-sandoval"
 url: "http://hscoder.github.io/heber-sandoval"
 fixedNav: 'true' # true or false
-theme: blue # green, blue, orange, purple, grey
+theme: minima # blue, green, blue, orange, purple, grey
 twitterUsername:
 githubUsername: hscoder
 dribbbleUsername:
