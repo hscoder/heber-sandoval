@@ -21,41 +21,39 @@ end
 
 ingredients_table
 
-| id  | name     | recipe_id |
-| :-- | :------- | :---------|
-| 1   | Tomatoes | 1         |
-| 2   | Garlic   | 1         |
-
-
 ```
 id |     name   | recipe_id |
 ---+------------+-----------+
 1  |  Tomatoes  |      1    |
 2  |  Garlic    |      1    |
-3  |  X         |           |
 ```
-
 
 recipes_table
 
-| id  | name     |
-| :-- | :------- |
-| 1   | Lasagna  |
+```
+id |   name   |
+---+----------+
+1  |  Lasagna |
+```
 
 Here, the ingredient `Tomatoes` is pointing to the `Lasagna` recipe. Adding `pasta`, `garlic`, `cheese` and any other ingredient needed for this recipe, would need to have a value of `1` in the `recipe_id` column of the ingredients_table to refer to the `Lasagna` in the recipes_table. But what would happen when I want to save my grandma's Pot Pie recipe, that also uses tomatoes, in the database?
 
 ingredients_table
 
-| id  | name     | recipe_id |
-| :-- | :------- | :---------|
-| 1   | Tomatoes | 1, [2]    |
+```
+id |     name   | recipe_id |
+---+------------+-----------+
+1  |  Tomatoes  |   1, [2]  |
+```
 
 recipes_table
 
-| id  | name     |
-| :-- | :------- |
-| 1   | Lasagna  |
-| 2   | Pot Pie  |
+```
+id |    name    |
+---+------------+
+1  |  Lasagna   |
+2  |  Pot Pie   |
+```
 
 Now, I'm forced to create another column in the ingredients_table to hold the ingredient from my grandma's recipe or spell tomatoes differently, maybe by dropping the "e" or just store another ingredient with same name. But that's very sloppy and a nightmare to maintain. So, in my second attempt, I used a many-to-many association, to solve this problem. So the best solution, in this case, is to create a `join table`, which I called `pantries` that will hold the foreign keys. I'll use the macro-like `has_many` class method with the `:through` option on the recipes_table and the ingredients_table.
 
@@ -63,23 +61,29 @@ Here is how the tables looks now:
 
 ingredients_table
 
-| id  | name     |
-| :-- | :------- |
-| 1   | Tomatoes |
+```
+id |     name   |
+---+------------+
+1  |  Tomatoes  |
+```
 
 pantries_table
 
-| id  | recipe_id | ingredient_id |
-| :-- | :-------- | :-------------|
-| 1   | 1         | 1             |
-| 2   | 2         | 1             |
+```
+id | recipe_id | ingredient_id |
+---+------------+--------------+
+1  |     1      |     1        |
+2  |     2      |     1        |
+```
 
 recipes_table
 
-| id  | name     |
-| :-- | :------- |
-| 1   | Lasagna  |
-| 2   | Pot Pie  |
+```
+id |     name   |
+---+------------+
+1  |  Lasagna   |
+2  |  Pot Pie   |
+```
 
 Now I can add my grandma's Pot Pie recipe, that needs those tomatoes to taste great, to the database. But this time, the ingredient that is associated to the Pot Pie recipe, will be stored the `join table` called pantries. As you can see, the Lasagna and the Pot Pie use `tomatoes` in their recipes. And now, one ingredient is pointing to a different recipe in the pantries_table, all possible through the `join table` foreign key columns.
 
