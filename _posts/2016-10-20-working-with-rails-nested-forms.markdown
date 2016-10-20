@@ -288,6 +288,3 @@ And there is our input forms. Now params looks like this.
 ```
 => {"utf8"=>"✓", "authenticity_token"=>"/wnR...", "recipe"=>{"name"=>"", "ingredients_attributes"=>{"0"=>{"name"=>"cheese"}, "1"=>{"name"=>"tomatoes"}, "2"=>{"name"=>"lettuce"}}}, "commit"=>"Create Recipe", "controller"=>"recipes", "action"=>"create"}
 ```
-
-
-https://github.com/aviflombaum/has-many-through-forms-rails-labs-v-000/blob/master/app/views/posts/_form.html.erb
