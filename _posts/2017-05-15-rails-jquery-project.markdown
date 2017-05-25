@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Rails JQuery Project"
-date:   2016-09-02
+date:   2017-05-15
 categories: Rails
 ---
 
