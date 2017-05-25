@@ -14,24 +14,33 @@ First, we need to set up our models, migrations, resources, controllers, views a
 Here's a birds view of the model structure:
 table
 
+
 #### users table
+```
 | id  | name | email |
 | :-- | :--- | :-----|
 |     |      |       |
+```
 
 #### posts table
+```
 | id  | title | body | user_id | category_id |
 | :-- | :---- | :--- | :------ | :-----------|
 |     |       |      |         |             |
+```
 
 #### categories table
+```
 | id  | name |
 | :-- | :----|
+```
 
 #### comments table
+```
 | id  | body  | post_id  | user_id |
 | :-- | :-----| :------- | :-------|
 |     |       |          |         |
+```
 
 ```
 users
@@ -62,9 +71,11 @@ Lets get started!
 ## Creating the User Model
 
 #### users table
+```
 | id  | name | email |
 | :-- | :--- | :-----|
 |     |      |       |
+```
 
  To start a new project, run:
 
@@ -118,9 +129,11 @@ end
 
 #### posts table
 
+```
 | id  | title | body | user_id | category_id |
 | :-- | :---- | :--- | :------ | :-----------|
 |     |       |      |         |             |
+```
 
 Brief description goes here.
 
