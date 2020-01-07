@@ -6,11 +6,11 @@ description: >
   line in _config.yml. It will appear in your document head meta (for
   Google search results) and in your feed.xml site description.
 baseurl: "/heber-sandoval"
-url: "http://hscoder.github.io/heber-sandoval"
+url: "hebersandoval.github.io/heber-sandoval"
 fixedNav: 'true' # true or false
 theme: minima # blue, green, blue, orange, purple, grey
 twitterUsername:
-githubUsername: hscoder
+githubUsername: hebersandoval
 dribbbleUsername:
 codepenUsername:
 
